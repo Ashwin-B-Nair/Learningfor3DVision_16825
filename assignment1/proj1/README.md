@@ -1,6 +1,6 @@
 # 16-825 Assignment 1: Rendering Basics with PyTorch3D 
 
-The code to be run is available in  `./starter/main.py` . 
+The code to be run is available in  `./proj1/starter/main.py` . 
 
 The helper functions such as `utils.py`, `dolly_zoom` etc. has been modified slightly as follows:
 
