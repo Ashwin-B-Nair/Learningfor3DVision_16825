@@ -83,6 +83,8 @@ def fit_pointcloud(pointclouds_src, pointclouds_tgt, args):
 
         print("[%4d/%4d]; ttime: %.0f (%.2f); loss: %.3f" % (step, args.max_iter, total_time,  iter_time, loss_vis))
     
+    pointcloud_visualizer(pointclouds_src.squeeze(0), output_path='results/1_pointcloudsrc.gif')
+    pointcloud_visualizer(pointclouds_tgt.squeeze(0), output_path='results/1_pointcloudtgt.gif')
     print('Done!')
 
 
