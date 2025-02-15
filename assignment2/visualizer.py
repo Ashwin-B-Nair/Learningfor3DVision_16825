@@ -19,7 +19,7 @@ def voxel_visualizer(voxels, output_path = 'voxel_visualize.gif', textures= None
     return 
 
 def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
-                    number_views= 20, image_size=256, distance= 3, fov =60, 
+                    number_views= 20, image_size=256, distance= 1, fov =60, 
                     fps=12, elev=1):
     device = get_device()
     print(device)
