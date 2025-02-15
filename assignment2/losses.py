@@ -1,7 +1,7 @@
 import torch
 import pytorch3d as p3d
 import torch.nn.functional as F
-
+from pytorch3d.loss import mesh_laplacian_smoothing
 
 # define losses
 def voxel_loss(voxel_src,voxel_tgt):
@@ -37,6 +37,11 @@ def chamfer_loss(point_cloud_src,point_cloud_tgt):
 def smoothness_loss(mesh_src):
 	# loss_laplacian = 
 	# implement laplacian smoothening loss
-	loss_laplacian = p3d.loss.mesh_laplacian_smoothing(mesh_src)
- 
+	# laplacian_matrix, _ = p3d.ops.cot_laplacian(mesh_src.verts_packed(), mesh_src.edges_packed())
+	# laplacian_differences = laplacian_matrix @ mesh_src.verts_packed()
+    
+    # # Compute squared norm of Laplacian differences
+	# loss_laplacian = torch.sum(laplacian_differences.pow(2), dim=1).mean()
+	
+	loss_laplacian = mesh_laplacian_smoothing(mesh_src)
 	return loss_laplacian
