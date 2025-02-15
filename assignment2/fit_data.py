@@ -58,8 +58,11 @@ def fit_mesh(mesh_src, mesh_tgt, args):
 
         print("[%4d/%4d]; ttime: %.0f (%.2f); loss: %.3f" % (step, args.max_iter, total_time,  iter_time, loss_vis))        
     
+    
     mesh_src.offset_verts_(deform_vertices_src)
-
+    mesh_visualizer(mesh_src, output_path='results/1_meshsrc.gif')
+    mesh_visualizer(mesh_tgt, output_path='results/1_meshtgt.gif')
+    
     print('Done!')
 
 
