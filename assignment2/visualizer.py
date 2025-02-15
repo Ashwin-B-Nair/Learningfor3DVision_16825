@@ -53,7 +53,7 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     
     return
 
-def pointcloud_visualizer(pcd, output_path = 'pointcloud_visualize.gif', textures= None,
+def pointcloud_visualizer(pcd, output_path = 'pointcloud_visualize.gif', rgb= None,
                     number_views= 20, image_size=256, distance= 3, fov =60, 
                     fps=12, elev=1):
     device = get_device()
@@ -63,6 +63,7 @@ def pointcloud_visualizer(pcd, output_path = 'pointcloud_visualize.gif', texture
 
     point_cloud = pytorch3d.structures.Pointclouds(points=[points], 
                                                    features=[rgb],).to(device)
+    
     azimuth = np.linspace(-180, 180, num=number_views)
     R, T = pytorch3d.renderer.look_at_view_transform(dist = distance, elev = elev, 
                                                      azim =azimuth)
