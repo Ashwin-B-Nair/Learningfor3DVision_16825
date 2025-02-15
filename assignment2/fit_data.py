@@ -1,6 +1,7 @@
 import argparse
 import os
 import time
+import torch
 
 import losses
 from pytorch3d.utils import ico_sphere

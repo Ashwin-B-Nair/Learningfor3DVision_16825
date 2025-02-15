@@ -1,4 +1,7 @@
 import torch
+import pytorch3d as p3d
+import torch.nn.functional as F
+
 
 # define losses
 def voxel_loss(voxel_src,voxel_tgt):
@@ -6,7 +9,15 @@ def voxel_loss(voxel_src,voxel_tgt):
 	# voxel_tgt: b x h x w x d
 	# loss = 
 	# implement some loss for binary voxel grids
-	return loss
+ 
+	# Flatten grids for BCE computation
+    voxel_src_flat = voxel_src.view(-1)   
+    voxel_tgt_flat = voxel_tgt.view(-1)
+
+    # Compute binary cross-entropy loss
+    loss = F.binary_cross_entropy(voxel_src_flat, voxel_tgt_flat)
+    
+    return loss
 
 def chamfer_loss(point_cloud_src,point_cloud_tgt):
 	# point_cloud_src, point_cloud_src: b x n_points x 3  
