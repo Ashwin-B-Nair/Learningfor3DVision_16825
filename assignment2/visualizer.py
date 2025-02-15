@@ -46,9 +46,9 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     lights = pytorch3d.renderer.PointLights(location=[[0, 0, 3]], device=device)
     
     images = renderer(render_mesh.extend(number_views), cameras= cameras, lights= lights)
-    # images = images.cpu().numpy()[..., :3]
-    # images = (images * 255).clip(0, 255).astype(np.uint8)
-    images = images.cpu().detach().numpy()
+    images = images.cpu().numpy()[..., :3]
+    images = (images * 255).clip(0, 255).astype(np.uint8)
+    # images = images.cpu().detach().numpy()
     imageio.mimsave(output_path, images, fps=fps, format='gif', loop=0)
     
     return
