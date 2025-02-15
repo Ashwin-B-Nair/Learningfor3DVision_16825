@@ -46,7 +46,7 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     lights = pytorch3d.renderer.PointLights(location=[[0, 0, 3]], device=device)
     
     images = renderer(render_mesh.extend(number_views), cameras= cameras, lights= lights)
-    images = images.cpu().numpy()[..., :3]
+    images = images.detach().cpu().numpy()[..., :3]
     images = (images * 255).clip(0, 255).astype(np.uint8)
     # images = images.cpu().detach().numpy()
     imageio.mimsave(output_path, images, fps=fps, format='gif', loop=0)
@@ -54,7 +54,7 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     return
 
 def pointcloud_visualizer(pcd, output_path = 'pointcloud_visualize.gif', rgb= None,
-                    number_views= 20, image_size=256, distance= 3, fov =60, 
+                    number_views= 20, image_size=256, distance= 1, fov =60, 
                     fps=12, elev=1):
     device = get_device()
     points = pcd
