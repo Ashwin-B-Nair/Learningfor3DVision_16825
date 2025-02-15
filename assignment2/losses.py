@@ -11,18 +11,22 @@ def voxel_loss(voxel_src,voxel_tgt):
 	# implement some loss for binary voxel grids
  
 	# Flatten grids for BCE computation
-    voxel_src_flat = voxel_src.view(-1)   
-    voxel_tgt_flat = voxel_tgt.view(-1)
+    # voxel_src_flat = voxel_src.view(-1)   
+    # voxel_tgt_flat = voxel_tgt.view(-1)
 
-    # Compute binary cross-entropy loss
-    loss = F.binary_cross_entropy(voxel_src_flat, voxel_tgt_flat)
-    
-    return loss
+    # # Compute binary cross-entropy loss
+    # loss = F.binary_cross_entropy(voxel_src_flat, voxel_tgt_flat)
+	voxel_src_new = voxel_src.view(voxel_src.size(0),-1)
+	voxel_tgt_new = voxel_tgt.view(voxel_tgt.size(0),-1)
+	loss_obj = torch.nn.BCEWithLogitsLoss()
+	loss = loss_obj(voxel_src_new, voxel_tgt_new)
+	return loss
 
 def chamfer_loss(point_cloud_src,point_cloud_tgt):
 	# point_cloud_src, point_cloud_src: b x n_points x 3  
 	# loss_chamfer = 
 	# implement chamfer loss from scratch
+	
 	return loss_chamfer
 
 def smoothness_loss(mesh_src):
