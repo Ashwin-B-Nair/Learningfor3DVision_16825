@@ -37,4 +37,6 @@ def chamfer_loss(point_cloud_src,point_cloud_tgt):
 def smoothness_loss(mesh_src):
 	# loss_laplacian = 
 	# implement laplacian smoothening loss
+	loss_laplacian = p3d.loss.mesh_laplacian_smoothing(mesh_src)
+ 
 	return loss_laplacian
