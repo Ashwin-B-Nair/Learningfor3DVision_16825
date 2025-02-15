@@ -10,7 +10,7 @@ from pytorch3d.ops import sample_points_from_meshes
 from pytorch3d.structures import Meshes
 import dataset_location
 import torch
-
+from visualizer import *
 
 
 
@@ -105,6 +105,9 @@ def fit_voxel(voxels_src, voxels_tgt, args):
         loss_vis = loss.cpu().item()
 
         print("[%4d/%4d]; ttime: %.0f (%.2f); loss: %.3f" % (step, args.max_iter, total_time,  iter_time, loss_vis))
+    
+    voxel_visualizer(voxels_src, output_path="results/1_voxelsrc.gif")
+    voxel_visualizer(voxels_tgt, output_path="results/1_voxelstgt.gif")
     
     print('Done!')
 
