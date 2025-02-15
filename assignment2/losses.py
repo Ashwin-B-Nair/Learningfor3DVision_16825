@@ -24,7 +24,14 @@ def chamfer_loss(point_cloud_src,point_cloud_tgt):
 	# point_cloud_src, point_cloud_src: b x n_points x 3  
 	# loss_chamfer = 
 	# implement chamfer loss from scratch
-	
+	dists_src_to_tgt, _, _ = p3d.ops.knn_points(point_cloud_src, point_cloud_tgt, K=1)
+	dists_tgt_to_src, _, _ = p3d.ops.knn_points(point_cloud_tgt, point_cloud_src, K=1)
+ 
+	loss_src_to_tgt = torch.mean(dists_src_to_tgt)  # Average over all points in src
+	loss_tgt_to_src = torch.mean(dists_tgt_to_src)  # Average over all points in tgt
+    
+	loss_chamfer = loss_src_to_tgt + loss_tgt_to_src
+ 
 	return loss_chamfer
 
 def smoothness_loss(mesh_src):
