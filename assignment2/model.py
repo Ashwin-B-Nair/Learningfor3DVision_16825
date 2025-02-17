@@ -55,7 +55,17 @@ class SingleViewto3D(nn.Module):
             # Output: b x args.n_points x 3  
             self.n_point = args.n_points
             # TODO:
-            # self.decoder =             
+            self.decoder = nn.Sequential(
+                    nn.Linear(512, 1024),
+                    nn.LeakyReLU(),
+                    nn.Linear(1024, self.n_point),
+                    nn.LeakyReLU(),
+                    nn.Linear(self.n_point, self.n_point*3),
+                    nn.Tanh()
+                    )  
+            
+            
+                     
         elif args.type == "mesh":
             # Input: b x 512
             # Output: b x mesh_pred.verts_packed().shape[0] x 3  
@@ -63,7 +73,14 @@ class SingleViewto3D(nn.Module):
             mesh_pred = ico_sphere(4, self.device)
             self.mesh_pred = pytorch3d.structures.Meshes(mesh_pred.verts_list()*args.batch_size, mesh_pred.faces_list()*args.batch_size)
             # TODO:
-            # self.decoder =             
+            shape = mesh_pred.verts_packed().shape[0]
+            self.decoder = nn.Sequential(
+                    nn.Linear(512, 1024),
+                    nn.ReLU(),
+                    nn.Linear(1024, 2048),
+                    nn.ReLU(),
+                    nn.Linear(2048, shape * 3)
+                )         
 
     def forward(self, images, args):
         results = dict()
@@ -87,7 +104,7 @@ class SingleViewto3D(nn.Module):
 
         elif args.type == "point":
             # TODO:
-            # pointclouds_pred =             
+            pointclouds_pred =  self.decoder(encoded_feat)          
             return pointclouds_pred
 
         elif args.type == "mesh":
