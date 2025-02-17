@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from pytorch3d.transforms import Rotate, axis_angle_to_matrix
 import math
 import numpy as np
+from visualizer import *
 
 def get_args_parser():
     parser = argparse.ArgumentParser('Singleto3D', add_help=False)
@@ -165,12 +166,23 @@ def evaluate_model(args):
         metrics = evaluate(predictions, mesh_gt, thresholds, args)
 
         # TODO:
-        # if (step % args.vis_freq) == 0:
+        if (step % args.vis_freq) == 0:
         #     # visualization block
         #     #  rend = 
         #     plt.imsave(f'vis/{step}_{args.type}.png', rend)
-      
-
+            images_gt = images_gt.permute(1, 2, 0).detach().cpu().numpy()  # Convert to HxWxC format
+           
+            if args.type=='vox':
+                
+                plt.imsave(f'vis/{step}_gt_img.png', images_gt)
+                pred_voxels = predictions[0].squeeze(0).detach().cpu()
+                voxel_visualizer(pred_voxels, output_path=f'vis/{step}_{args.type}.gif')
+                
+                gt_voxels = mesh_gt.voxels().detach().squeeze(0).cpu()
+                mesh_visualizer(gt_voxels, output_path=f'vis/{step}_gt_mesh.gif')
+            
+            
+            
         total_time = time.time() - start_time
         iter_time = time.time() - iter_start_time
 
