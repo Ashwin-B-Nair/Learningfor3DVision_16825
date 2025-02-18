@@ -27,7 +27,7 @@ class SingleViewto3D(nn.Module):
                 nn.Linear(512, 2048), 
                 nn.ReLU(),
                 
-                nn.Unflatten((-1, 256, 2, 2, 2)), # Reshape to b x 256 x 2 x 2 x 2
+                nn.Unflatten(-1, (256, 2, 2, 2)), # Reshape to b x 256 x 2 x 2 x 2
                 
                 nn.ConvTranspose3d(256, 128, kernel_size=4, stride=2, padding=1), # b x 128 x 4 x 4 x 4
                 nn.BatchNorm3d(128),
