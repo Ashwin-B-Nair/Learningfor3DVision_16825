@@ -182,7 +182,7 @@ def evaluate_model(args):
                 pred_voxels = predictions[0].detach().cpu()
                 voxel_visualizer(pred_voxels, output_path=f'vis/{args.type}/{step}_{args.type}.gif')
                 
-                gt_voxels = mesh_gt.voxels().detach().squeeze(0).cpu()
+                gt_voxels = mesh_gt.detach().cpu()
                 mesh_visualizer(gt_voxels, output_path=f'vis/{args.type}/{step}_gt_mesh.gif')
                 
             if args.type=='point':
@@ -191,7 +191,7 @@ def evaluate_model(args):
                 pred_point_cloud = predictions[0].detach().cpu()
                 voxel_visualizer(pred_point_cloud, output_path=f'vis/{args.type}/{step}_{args.type}.gif')
                 
-                gt_voxels = mesh_gt.voxels().detach().squeeze(0).cpu()
+                gt_voxels = mesh_gt.detach().cpu()
                 mesh_visualizer(gt_voxels, output_path=f'vis/{args.type}/{step}_gt_mesh.gif')
             
             if args.type=='mesh':
@@ -199,7 +199,7 @@ def evaluate_model(args):
                 pred_mesh = predictions[0].detach().cpu()
                 mesh_visualizer(pred_mesh, output_path=f'vis/{args.type}/{step}_{args.type}.gif')
                 
-                gt_voxels = mesh_gt.voxels().detach().squeeze(0).cpu()
+                gt_voxels = mesh_gt.detach().cpu()
                 mesh_visualizer(gt_voxels, output_path=f'vis/{args.type}/{step}_gt_mesh.gif')
             
             
