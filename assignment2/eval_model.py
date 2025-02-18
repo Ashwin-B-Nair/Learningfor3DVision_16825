@@ -170,7 +170,8 @@ def evaluate_model(args):
         #     # visualization block
         #     #  rend = 
         #     plt.imsave(f'vis/{step}_{args.type}.png', rend)
-            images_gt = images_gt.permute(1, 2, 0).detach().cpu().numpy()  # Convert to HxWxC format
+            # images_gt = images_gt.permute(1, 2, 0).detach().cpu().numpy()  # Convert to HxWxC format
+            images_gt = images_gt[0, ..., :3].detach().cpu().numpy()  # Convert to HxWxC format
            
             if args.type=='vox':
                 
