@@ -192,8 +192,8 @@ def evaluate_model(args):
             
             if args.type=='mesh':
                 plt.imsave(f'vis/{args.type}/{step}_gt_img.png', images_gt)
-                pred_point_cloud = predictions[0].squeeze(0).detach().cpu()
-                mesh_visualizer(pred_point_cloud, output_path=f'vis/{args.type}/{step}_{args.type}.gif')
+                pred_mesh = predictions[0].squeeze(0).detach().cpu()
+                mesh_visualizer(pred_mesh, output_path=f'vis/{args.type}/{step}_{args.type}.gif')
                 
                 gt_voxels = mesh_gt.voxels().detach().squeeze(0).cpu()
                 mesh_visualizer(gt_voxels, output_path=f'vis/{args.type}/{step}_gt_mesh.gif')
