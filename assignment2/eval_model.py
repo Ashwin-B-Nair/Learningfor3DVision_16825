@@ -165,6 +165,9 @@ def evaluate_model(args):
 
         metrics = evaluate(predictions, mesh_gt, thresholds, args)
 
+        if args.type == "vox":
+                predictions = predictions.permute(0,1,4,3,2)
+            
         # TODO:
         if (step % args.vis_freq) == 0:
         #     # visualization block
