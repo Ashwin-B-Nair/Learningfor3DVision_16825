@@ -179,7 +179,7 @@ def evaluate_model(args):
             if args.type=='vox':
                 
                 plt.imsave(f'vis/{args.type}/{step}_gt_img.png', images_gt)
-                pred_voxels = predictions[0]..detach().cpu()
+                pred_voxels = predictions[0].detach().cpu()
                 voxel_visualizer(pred_voxels, output_path=f'vis/{args.type}/{step}_{args.type}.gif')
                 
                 gt_voxels = mesh_gt.voxels().detach().squeeze(0).cpu()
