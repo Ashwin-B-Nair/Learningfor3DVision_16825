@@ -11,7 +11,7 @@ def voxel_visualizer(voxels, output_path = 'voxel_visualize.gif', textures= None
                     threshold = 0.5, number_views= 20, image_size=256, distance= 3, 
                     fov =60, fps=12, elev=1):
     device = get_device()
-    print(device)
+    # print(device)
     mesh = pytorch3d.ops.cubify(voxels, thresh=threshold).to(device)
     mesh_visualizer(mesh, output_path,textures= None,number_views= 20, 
                     image_size=256, distance= 3, fov =60, fps=12, elev=1)
@@ -22,7 +22,7 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
                     number_views= 20, image_size=256, distance= 1, fov =60, 
                     fps=12, elev=1):
     device = get_device()
-    print(device)
+    # print(device)
     vertices = mesh.verts_list()[0]
     faces = mesh.faces_list()[0]
     vertices = vertices.unsqueeze(0)  # (N_v, 3) -> (1, N_v, 3)
