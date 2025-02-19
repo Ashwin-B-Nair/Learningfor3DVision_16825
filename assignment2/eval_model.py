@@ -176,8 +176,7 @@ def evaluate_model(args):
 
         metrics = evaluate(predictions, mesh_gt, thresholds, args)
 
-        if metrics is None:
-            print("WARNING: empty mesh found for evaluation ", step)
+        if metrics == False:
             continue
         
         if args.type == "vox":
