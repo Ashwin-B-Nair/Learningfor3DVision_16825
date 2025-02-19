@@ -28,9 +28,12 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     vertices = vertices.unsqueeze(0)  # (N_v, 3) -> (1, N_v, 3)
     faces = faces.unsqueeze(0)     # (N_f, 3) -> (1, N_f, 3)
     
+   
     if textures is None:
-        textures = torch.ones_like(vertices)  # (1, N_v, 3)
-        textures = (vertices - vertices.min()) / (vertices.max() - vertices.min())
+        if vertices.numel() > 0:
+            textures = (vertices - vertices.min()) / (vertices.max() - vertices.min())
+        else:
+            textures = torch.zeros_like(vertices)  # Default to zero textures for empty tensors
     
     render_mesh = pytorch3d.structures.Meshes(
             verts=vertices,
