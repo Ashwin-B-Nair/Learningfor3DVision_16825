@@ -176,6 +176,10 @@ def evaluate_model(args):
 
         metrics = evaluate(predictions, mesh_gt, thresholds, args)
 
+        if metrics is None:
+            print("WARNING: empty mesh found for evaluation ", step)
+            continue
+        
         if args.type == "vox":
                 predictions = predictions.permute(0,1,4,3,2)
             
