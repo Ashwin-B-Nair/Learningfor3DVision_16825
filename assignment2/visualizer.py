@@ -13,6 +13,10 @@ def voxel_visualizer(voxels, output_path = 'voxel_visualize.gif', textures= None
     device = get_device()
     # print(device)
     mesh = pytorch3d.ops.cubify(voxels, thresh=threshold).to(device)
+    # Check if the mesh is empty
+    if len(mesh.verts_list()[0]) == 0:
+        print("Generated mesh is empty. Skipping visualization.")
+        return
     mesh_visualizer(mesh, output_path,textures= None,number_views= 20, 
                     image_size=256, distance= 3, fov =60, fps=12, elev=1)
     
