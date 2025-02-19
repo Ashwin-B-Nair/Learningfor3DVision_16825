@@ -30,8 +30,8 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     
    
     if textures is None:
-        textures = torch.ones_like(vertices)  # (1, N_v, 3)
-        textures = (vertices - vertices.min()) / (vertices.max() - vertices.min())
+        # textures = torch.ones_like(vertices)  # (1, N_v, 3)
+        # textures = (vertices - vertices.min()) / (vertices.max() - vertices.min())
         if vertices.numel() > 0:
             textures = torch.ones_like(vertices)
             textures = (vertices - vertices.min()) / (vertices.max() - vertices.min())
