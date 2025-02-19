@@ -105,7 +105,7 @@ class SingleViewto3D(nn.Module):
         elif args.type == "point":
             # TODO:
             pointclouds_pred =  self.decoder(encoded_feat)    
-            pointclouds_pred = pointclouds_pred.view(-1, self.n_points, 3)      
+            pointclouds_pred = pointclouds_pred.view(-1, self.n_point, 3)      
             return pointclouds_pred
 
         elif args.type == "mesh":
