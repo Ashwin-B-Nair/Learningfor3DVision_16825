@@ -91,15 +91,18 @@ def evaluate(predictions, mesh_gt, thresholds, args):
         voxels_src = predictions
         H,W,D = voxels_src.shape[2:]
         vertices_src, faces_src = mcubes.marching_cubes(voxels_src.detach().cpu().squeeze().numpy(), isovalue=0.5)
-        
-        # ValueError! Meshes are empty
-        if vertices_src.shape == torch.Size([0, 3]):
-            print("Meshes are empty")
-            return False
-    
         vertices_src = torch.tensor(vertices_src).float()
         faces_src = torch.tensor(faces_src.astype(int))
         mesh_src = pytorch3d.structures.Meshes([vertices_src], [faces_src])
+        
+        # ValueError! Meshes are empty
+        # if vertices_src.shape == torch.Size([0, 3]):
+        #     print("Meshes are empty")
+        #     return False
+        
+        if len(mesh_src.verts_list()[0]) == 0:
+            return None
+        
         pred_points = sample_points_from_meshes(mesh_src, args.n_points)
         pred_points = utils_vox.Mem2Ref(pred_points, H, W, D)
         # Apply a rotation transform to align predicted voxels to gt mesh
@@ -110,6 +113,7 @@ def evaluate(predictions, mesh_gt, thresholds, args):
         pred_points = T_transform.transform_points(pred_points)
         # re-center the predicted points
         pred_points = pred_points - pred_points.mean(1, keepdim=True)
+        
     elif args.type == "point":
         pred_points = predictions.cpu()
     elif args.type == "mesh":
@@ -119,6 +123,7 @@ def evaluate(predictions, mesh_gt, thresholds, args):
     if args.type == "vox":
         gt_points = gt_points - gt_points.mean(1, keepdim=True)
     metrics = compute_sampling_metrics(pred_points, gt_points, thresholds)
+    
     return metrics
 
 
