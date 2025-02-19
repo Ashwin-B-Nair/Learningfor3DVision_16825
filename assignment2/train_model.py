@@ -91,7 +91,7 @@ def train_model(args):
     model.train()
 
     # ============ preparing optimizer ... ============
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)  # to use with ViTs
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)  # to use with ViTs
     start_iter = 0
     start_time = time.time()
 
