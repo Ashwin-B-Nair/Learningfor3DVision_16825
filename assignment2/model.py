@@ -62,7 +62,7 @@ class SingleViewto3D(nn.Module):
                     nn.LeakyReLU(),
                     nn.Linear(self.n_point, self.n_point*3),
                     nn.Tanh()
-                    )  
+                    )   
             
             
                      
