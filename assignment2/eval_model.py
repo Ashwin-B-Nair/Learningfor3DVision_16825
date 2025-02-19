@@ -95,7 +95,7 @@ def evaluate(predictions, mesh_gt, thresholds, args):
         # ValueError! Meshes are empty
         if vertices_src.shape == torch.Size([0, 3]):
             print("Meshes are empty")
-        return False
+            return False
     
         vertices_src = torch.tensor(vertices_src).float()
         faces_src = torch.tensor(faces_src.astype(int))
