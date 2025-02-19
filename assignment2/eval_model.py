@@ -96,12 +96,12 @@ def evaluate(predictions, mesh_gt, thresholds, args):
         mesh_src = pytorch3d.structures.Meshes([vertices_src], [faces_src])
         
         # ValueError! Meshes are empty
-        # if vertices_src.shape == torch.Size([0, 3]):
-        #     print("Meshes are empty")
-        #     return False
+        if vertices_src.shape == torch.Size([0, 3]):
+            print("Meshes are empty")
+            return False
         
-        if len(mesh_src.verts_list()[0]) == 0:
-            return None
+        # if len(mesh_src.verts_list()[0]) == 0:
+        #     return None
         
         pred_points = sample_points_from_meshes(mesh_src, args.n_points)
         pred_points = utils_vox.Mem2Ref(pred_points, H, W, D)
