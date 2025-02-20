@@ -30,8 +30,8 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     # print(device)
     vertices = mesh.verts_list()[0]
     faces = mesh.faces_list()[0]
-    vertices = vertices.unsqueeze(0)  # (N_v, 3) -> (1, N_v, 3)
-    faces = faces.unsqueeze(0)     # (N_f, 3) -> (1, N_f, 3)
+    # vertices = vertices.unsqueeze(0)  # (N_v, 3) -> (1, N_v, 3)
+    # faces = faces.unsqueeze(0)     # (N_f, 3) -> (1, N_f, 3)
     
    
     if textures is None:
@@ -53,7 +53,7 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     render_mesh = pytorch3d.structures.Meshes(
             verts=vertices,
             faces=faces,
-            textures=pytorch3d.renderer.TexturesVertex(textures),
+            textures=pytorch3d.renderer.TexturesVertex(textures.unsqueeze(0)),
     ).to(device)
     
     azimuth = np.linspace(-180, 180, num=number_views)
