@@ -16,7 +16,7 @@ def voxel_loss(voxel_src,voxel_tgt):
 	# voxel_src_flat = voxel_src.view(voxel_src.size(0),-1)
 	# voxel_tgt_flat = voxel_tgt.view(voxel_tgt.size(0),-1)
 
-	bce_loss = torch.nn.BCELoss()
+	bce_loss = torch.nn.BCEWithLogitsLoss()
 	loss = bce_loss(voxel_src_flat, voxel_tgt_flat)
 	return loss
 

@@ -46,7 +46,7 @@ class SingleViewto3D(nn.Module):
                 nn.ReLU(),
                 
                 nn.ConvTranspose3d(8, 1, kernel_size=1, stride=1, padding=0, bias=False), # b x 1 x 32 x 32 x 32
-                nn.Sigmoid()
+                # nn.Sigmoid()
                     )
             
                          
