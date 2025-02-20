@@ -53,7 +53,7 @@ def mesh_visualizer(mesh, output_path = 'mesh_visualize.gif', textures= None,
     render_mesh = pytorch3d.structures.Meshes(
             verts=vertices,
             faces=faces,
-            textures=pytorch3d.renderer.TexturesVertex(textures.unsqueeze(0)),
+            textures=pytorch3d.renderer.TexturesVertex(textures),
     ).to(device)
     
     azimuth = np.linspace(-180, 180, num=number_views)
