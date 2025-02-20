@@ -1,7 +1,7 @@
 # specify the root location where u downloaded the dataset
 root_location = "/mnt/data/r2n2_shapenet_dataset"
 # root_location = "C:/Users/ashwi/Downloads/r2n2_shapenet_dataset/r2n2_shapenet_dataset"
-use_full_dataset = False
+use_full_dataset = True
 dataset_name = (
     "r2n2_shapenet_dataset_full" if use_full_dataset else "r2n2_shapenet_dataset"
 )
