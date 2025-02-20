@@ -206,10 +206,10 @@ def evaluate_model(args):
                     mesh_visualizer(mesh_gt.detach().cpu(), output_path=f'vis/{args.type}/{step}_gt_mesh.gif')
 
                 elif args.n_points == 5000:
-                    plt.imsave(f'vis/{args.type}/{step}_gt_img.png', images_gt)
+                    plt.imsave(f'vis/{args.n_points}_points/{step}_gt_img.png', images_gt)
                     pred_point_cloud = predictions[0].detach().cpu()
-                    pointcloud_visualizer(pred_point_cloud, output_path=f'vis/{args.type}/{step}_{args.type}.gif')
-                    mesh_visualizer(mesh_gt.detach().cpu(), output_path=f'vis/{args.type}/{step}_gt_mesh.gif')
+                    pointcloud_visualizer(pred_point_cloud, output_path=f'vis/{args.n_points}_points/{step}_{args.type}.gif')
+                    mesh_visualizer(mesh_gt.detach().cpu(), output_path=f'vis/{args.n_points}_points/{step}_gt_mesh.gif')
                 
                 elif args.n_points == 10000:
                     plt.imsave(f'vis/{args.n_points}_points/{step}_gt_img.png', images_gt)
