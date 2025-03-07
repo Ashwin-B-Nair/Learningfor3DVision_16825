@@ -129,7 +129,7 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
             torch.ones_like(ndc_points[..., -1:])
         ],
         dim=-1
-    )
+    ).to(camera.device)
 
     # TODO (Q1.3): Use camera.unproject to get world space points from NDC space points
     world_points = camera.unproject_points(ndc_points, from_ndc= True)
