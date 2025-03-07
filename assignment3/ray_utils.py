@@ -121,7 +121,7 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
     W, H = image_size[0], image_size[1]
 
     # TODO (Q1.3): Map pixels to points on the image plane at Z=1
-    ndc_points = xy_grid
+    ndc_points = xy_grid.cuda()
 
     ndc_points = torch.cat(
         [
@@ -129,7 +129,7 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
             torch.ones_like(ndc_points[..., -1:])
         ],
         dim=-1
-    ).to(camera.device)
+    )
 
     # TODO (Q1.3): Use camera.unproject to get world space points from NDC space points
     world_points = camera.unproject_points(ndc_points, from_ndc= True)
