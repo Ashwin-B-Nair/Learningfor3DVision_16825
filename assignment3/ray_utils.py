@@ -93,8 +93,8 @@ def get_pixels_from_image(image_size, camera):
     y = torch.arange(start=0, end= H, step=1)
 
     # TODO (Q1.3): Convert to the range [-1, 1] in both x and y
-    x = 2 * (x - 0)/(W - 0) - 1
-    y = 2 * (x - 0)/(H - 0) - 1
+    x = 2 * (x - 0)/(W - 0.5) #- 1
+    y = 2 * (x - 0)/(H - 0.5) #- 1
 
     # Create grid of coordinates
     xy_grid = torch.stack(
