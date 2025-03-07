@@ -23,10 +23,16 @@ class StratifiedRaysampler(torch.nn.Module):
         ray_bundle,
     ):
         # TODO (Q1.4): Compute z values for self.n_pts_per_ray points uniformly sampled between [near, far]
-        z_vals = None
+        z_vals = torch.linspace(self.min_depth, self.max_depth, self.n_pts_per_ray, device='cuda')
 
+    
         # TODO (Q1.4): Sample points from z values
-        sample_points = None
+        O = ray_bundle.origins.shape[0]   
+        N =  z_vals.shape[0]
+        origins= ray_bundle.origins.unsqueeze(1).repeat(1, N, 1)         # [batch_size, num_rays, 3] ->  [batch_size, n_pts_per_ray, num_rays, 3]
+        directions = ray_bundle.directions.unsqueeze(1).repeat(1, N, 1)  # [batch_size, num_rays, 3] ->  [batch_size, n_pts_per_ray, num_rays, 3]
+        z_vals = z_vals.unsqueeze(0).unsqueeze(-1).repeat(O, 1, 1)       # [n_pts_per_ray] ->  [batch_size, n_pts_per_ray, num_rays]
+        sample_points = z_vals * directions + origins
 
         # Return
         return ray_bundle._replace(
