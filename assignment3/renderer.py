@@ -25,7 +25,7 @@ class VolumeRenderer(torch.nn.Module):
         # TODO (1.5): Compute transmittance using the equation described in the README
         weights = []
         B, N, _ = deltas.shape    # [batch_size, n_points, _]
-        T = torch.ones_like((B,1)).cuda()  #[batch_size, 1]
+        T = torch.ones((B,1)).cuda()  #[batch_size, 1]
         
         for i in range(N):    #iterates over all sampled points along each ray
             weights.append(T)
