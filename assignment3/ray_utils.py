@@ -96,11 +96,6 @@ def get_pixels_from_image(image_size, camera):
     # TODO (Q1.3): Convert to the range [-1, 1] in both x and y
     x = 2 * (x/W) - 1
     y = 2 * (y/H) - 1
-
-    # x_max = x[-1]
-    # y_max = y[-1]
-    # x = 2*(x/x_max) - 1
-    # y = 2*(y/y_max) - 1
     
     # Create grid of coordinates
     xy_grid = torch.stack(
