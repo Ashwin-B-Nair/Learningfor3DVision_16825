@@ -29,11 +29,13 @@ class VolumeRenderer(torch.nn.Module):
         
         for i in range(N):    #iterates over all sampled points along each ray
             weights.append(T)
-            T = T * torch.exp(-rays_density[:, i] * deltas[:, i] + eps)
+            T = T * torch.exp(-rays_density[:, i] * deltas[:, i] + eps)  
             
+        #end of loop size of weights: [N,1] with each tensor [batch_size,1]
+        
         # TODO (1.5): Compute weight used for rendering from transmittance and alpha
-        alpha = 1 - torch.exp(-rays_density*deltas + eps)
-        weights = torch.stack(weights, dim = 1) * alpha
+        alpha = 1 - torch.exp(-rays_density*deltas + eps)  
+        weights = torch.stack(weights, dim = 1) * alpha    #stack weights to get size [batch_size, n_points, 1]
         
         return weights  
     
