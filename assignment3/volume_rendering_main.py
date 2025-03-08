@@ -14,7 +14,7 @@ from pytorch3d.renderer import (
     look_at_view_transform
 )
 import matplotlib.pyplot as plt
-
+from render_functions import *
 from implicit import implicit_dict
 from sampler import sampler_dict
 from renderer import renderer_dict
@@ -113,7 +113,7 @@ def render_images(
 
         # TODO (Q1.4): Visualize sample points as point cloud
         if cam_idx == 0 and file_prefix == '':
-            pass
+            render_points('images/sampled.png', ray_bundle.sample_points.reshape(1, -1, 3))
 
         # TODO (Q1.5): Implement rendering in renderer.py
         out = model(ray_bundle)
