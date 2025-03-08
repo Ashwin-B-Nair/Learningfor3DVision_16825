@@ -136,8 +136,8 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
     world_points = camera.unproject_points(ndc_points)
 
     # TODO (Q1.3): Get ray origins from camera center
-    # rays_o = camera.get_camera_center().expand(world_points.shape[0], -1) 
-    rays_o = camera.get_camera_center() 
+    rays_o = camera.get_camera_center().expand(world_points.shape[0], -1) 
+    # rays_o = camera.get_camera_center() 
 
     # TODO (Q1.3): Get ray directions as image_plane_points - rays_o
     rays_d = world_points - rays_o
