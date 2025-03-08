@@ -23,10 +23,19 @@ class VolumeRenderer(torch.nn.Module):
         eps: float = 1e-10
     ):
         # TODO (1.5): Compute transmittance using the equation described in the README
-        pass
-
+        weights = []
+        B, N, _ = deltas.shape    # [batch_size, n_points, _]
+        T = torch.ones_like((B,1)).cuda()  #[batch_size, 1]
+        
+        for i in range(N):    #iterates over all sampled points along each ray
+            weights.append(T)
+            T = T * torch.exp(-rays_density[:, i] * deltas[:, i] + eps)
+            
         # TODO (1.5): Compute weight used for rendering from transmittance and alpha
-        return weights
+        alpha = 1 - torch.exp(-rays_density*deltas + eps)
+        weights = torch.stack(weights, dim = 1) * alpha
+        
+        return weights  
     
     def _aggregate(
         self,
@@ -34,7 +43,7 @@ class VolumeRenderer(torch.nn.Module):
         rays_feature: torch.Tensor
     ):
         # TODO (1.5): Aggregate (weighted sum of) features using weights
-        pass
+        feature = torch.sum(weights * rays_feature, dim=1)
 
         return feature
 
@@ -78,10 +87,10 @@ class VolumeRenderer(torch.nn.Module):
             ) 
 
             # TODO (1.5): Render (color) features using weights
-            pass
+            feature = self._aggregate(weights, feature.view(-1,n_pts,3))
 
             # TODO (1.5): Render depth map
-            pass
+            depth = self._aggregate(weights, depth_values.view(-1,n_pts,1))
 
             # Return
             cur_out = {

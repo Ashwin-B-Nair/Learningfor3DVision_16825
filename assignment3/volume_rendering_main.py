@@ -204,7 +204,7 @@ def train(
             out = model(ray_bundle)
 
             # TODO (Q2.2): Calculate loss
-            loss = None
+            loss = torch.nn.MSELoss()(out['feature'], rgb_gt)
 
             # Backprop
             optimizer.zero_grad()
