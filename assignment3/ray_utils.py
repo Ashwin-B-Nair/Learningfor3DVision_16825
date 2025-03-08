@@ -141,7 +141,7 @@ def get_rays_from_pixels(xy_grid, image_size, camera):
 
     # TODO (Q1.3): Get ray directions as image_plane_points - rays_o
     rays_d = world_points - rays_o
-    # rays_d = torch.nn.functional.normalize(rays_d)
+    rays_d = torch.nn.functional.normalize(rays_d)
 
     # Create and return RayBundle
     return RayBundle(
