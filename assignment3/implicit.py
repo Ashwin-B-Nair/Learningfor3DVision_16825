@@ -310,7 +310,7 @@ class NeuralRadianceField(torch.nn.Module):
         self.mlp_xyz = MLPWithInputSkips(
             n_layers=cfg.n_layers_xyz,         # Number of layers in the MLP
             input_dim=embedding_dim_xyz,      # Input dimension from positional encoding
-            output_dim=cfg.n_hidden_neurons_xyz + 1,  # Output: hidden_dim for features + 1 for density
+            output_dim=cfg.n_hidden_neurons_xyz,  # Output: hidden_dim for features + 1 for density
             skip_dim=embedding_dim_xyz,       # Dimensionality of positional encoding for skip connection
             hidden_dim=cfg.n_hidden_neurons_xyz,      # Number of neurons in hidden layers
             input_skips=cfg.append_xyz        # Skip connection at specified layers
