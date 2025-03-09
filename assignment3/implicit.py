@@ -318,9 +318,9 @@ class NeuralRadianceField(torch.nn.Module):
         
         # self.linear = torch.nn.Linear(cfg.n_hidden_neurons_xyz, 4)
         self.color_layer = torch.nn.Sequential(
-            torch.nn.Linear(cfg.n_hidden_neurons_xyz, cfg.n_hidden_neurons_xyz // 2),
+            torch.nn.Linear(cfg.n_hidden_neurons_xyz, cfg.n_hidden_neurons_dir),
             torch.nn.ReLU(),
-            torch.nn.Linear(cfg.n_hidden_neurons_xyz // 2, 3),
+            torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
             torch.nn.Sigmoid()  # Ensure RGB values are in [0, 1]
         )
         
@@ -343,6 +343,12 @@ class NeuralRadianceField(torch.nn.Module):
 
         # Compute RGB color from intermediate features
         color = self.color_layer(intermediate_features)              # [batch_size * n_pts_per_ray, 3]
+
+        print("Encoded Points:", encoded_points.shape)
+        print("MLP Output:", mlp_output.shape)
+        print("Intermediate Features:", intermediate_features.shape)
+        print("Density:", density.shape)
+        print("Color:", color.shape)
 
         return {
             "density": density.view(*ray_bundle.sample_points.shape[:-1], 1),   # Reshape back to match ray_bundle
