@@ -222,6 +222,7 @@ def train(
     #output:
     #Box center: (0.25021305680274963, 0.25057318806648254, -0.00046489297528751194)
     #Box side lengths: (2.005079746246338, 1.5035337209701538, 1.503293752670288)
+    
     # Render images after training
     render_images(
         model, cameras, image_size,
@@ -327,7 +328,7 @@ def train_nerf(
             out = model(ray_bundle)
 
             # TODO (Q3.1): Calculate loss
-            loss = None
+            loss = torch.nn.MSELoss()(out['feature'], rgb_gt)
 
             # Take the training step.
             optimizer.zero_grad()

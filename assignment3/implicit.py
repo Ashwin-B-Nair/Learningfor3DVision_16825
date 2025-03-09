@@ -297,8 +297,61 @@ class NeuralRadianceField(torch.nn.Module):
 
         embedding_dim_xyz = self.harmonic_embedding_xyz.output_dim
         embedding_dim_dir = self.harmonic_embedding_dir.output_dim
+        
+        # self.mlp_skip = MLPWithInputSkips(
+        #     n_layers=cfg.n_layers_xyz,
+        #     input_dim=embedding_dim_xyz,
+        #     output_dim=cfg.n_hidden_neurons_xyz,
+        #     skip_dim=0,
+        #     hidden_dim=cfg.n_hidden_neurons_xyz,
+        #     input_skips=[],
+        # )
+        
+        self.mlp_xyz = MLPWithInputSkips(
+            n_layers=cfg.n_layers_xyz,         # Number of layers in the MLP
+            input_dim=embedding_dim_xyz,      # Input dimension from positional encoding
+            output_dim=cfg.n_hidden_neurons_xyz + 1,  # Output: hidden_dim for features + 1 for density
+            skip_dim=embedding_dim_xyz,       # Dimensionality of positional encoding for skip connection
+            hidden_dim=cfg.n_hidden_neurons_xyz,      # Number of neurons in hidden layers
+            input_skips=cfg.append_xyz        # Skip connection at specified layers
+        )
+        
+        # self.linear = torch.nn.Linear(cfg.n_hidden_neurons_xyz, 4)
+        self.color_layer = torch.nn.Sequential(
+            torch.nn.Linear(cfg.n_hidden_neurons_xyz, cfg.n_hidden_neurons_xyz // 2),
+            torch.nn.ReLU(),
+            torch.nn.Linear(cfg.n_hidden_neurons_xyz // 2, 3),
+            torch.nn.Sigmoid()  # Ensure RGB values are in [0, 1]
+        )
+        
+    def forward(self, ray_bundle):
+        # Extract sample points from RayBundle
+        sample_points = ray_bundle.sample_points.view(-1, 3)         # [batch_size * n_pts_per_ray, 3]
 
-        pass
+        # Apply positional encoding to sample points
+        encoded_points = self.harmonic_embedding_xyz(sample_points)  # [batch_size * n_pts_per_ray, embedding_dim_xyz]
+
+        # Pass encoded points through MLP
+        mlp_output = self.mlp_xyz(encoded_points, encoded_points)    # [batch_size * n_pts_per_ray, hidden_dim + 1]
+
+        # Split into density and intermediate features
+        density_raw = mlp_output[..., -1:]                           # Last output is density (raw value)
+        intermediate_features = mlp_output[..., :-1]                 # Remaining outputs are intermediate features
+
+        # Compute density (apply ReLU to ensure non-negativity)
+        density = torch.relu(density_raw)                            # [batch_size * n_pts_per_ray, 1]
+
+        # Compute RGB color from intermediate features
+        color = self.color_layer(intermediate_features)              # [batch_size * n_pts_per_ray, 3]
+
+        return {
+            "density": density.view(*ray_bundle.sample_points.shape[:-1], 1),   # Reshape back to match ray_bundle
+            "feature": color.view(*ray_bundle.sample_points.shape[:-1], 3)     # Reshape back to match ray_bundle
+        }
+
+          
+
+        
 
 
 class NeuralSurface(torch.nn.Module):
