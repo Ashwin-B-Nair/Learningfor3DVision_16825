@@ -338,6 +338,10 @@ class NeuralRadianceField(torch.nn.Module):
         density_raw = mlp_output[..., -1:]                           # Last output is density (raw value)
         intermediate_features = mlp_output[..., :-1]                 # Remaining outputs are intermediate features
 
+        print("Encoded Points:", encoded_points.shape)
+        print("MLP Output:", mlp_output.shape)
+        print("Intermediate Features:", intermediate_features.shape)
+        
         # Compute density (apply ReLU to ensure non-negativity)
         density = torch.relu(density_raw)                            # [batch_size * n_pts_per_ray, 1]
 
