@@ -338,9 +338,9 @@ class NeuralRadianceField(torch.nn.Module):
         density_raw = mlp_output[..., -1:]                           # Last output is density (raw value)
         intermediate_features = mlp_output[..., :-1]                 # Remaining outputs are intermediate features
 
-        print("Encoded Points:", encoded_points.shape)
-        print("MLP Output:", mlp_output.shape)
-        print("Intermediate Features:", intermediate_features.shape)
+        # print("Encoded Points:", encoded_points.shape)
+        # print("MLP Output:", mlp_output.shape)
+        # print("Intermediate Features:", intermediate_features.shape)
         
         # Compute density (apply ReLU to ensure non-negativity)
         density = torch.relu(density_raw)                            # [batch_size * n_pts_per_ray, 1]
@@ -348,11 +348,9 @@ class NeuralRadianceField(torch.nn.Module):
         # Compute RGB color from intermediate features
         color = self.color_layer(mlp_output)              # [batch_size * n_pts_per_ray, 3]
 
-        print("Encoded Points:", encoded_points.shape)
-        print("MLP Output:", mlp_output.shape)
-        print("Intermediate Features:", intermediate_features.shape)
-        print("Density:", density.shape)
-        print("Color:", color.shape)
+        
+        # print("Density:", density.shape)
+        # print("Color:", color.shape)
 
         return {
             "density": density.view(*ray_bundle.sample_points.shape[:-1], 1),   # Reshape back to match ray_bundle
