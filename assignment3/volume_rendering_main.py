@@ -218,7 +218,10 @@ def train(
     # Print center and side lengths
     print("Box center:", tuple(np.array(model.implicit_fn.sdf.center.data.detach().cpu()).tolist()[0]))
     print("Box side lengths:", tuple(np.array(model.implicit_fn.sdf.side_lengths.data.detach().cpu()).tolist()[0]))
-
+    
+    #output:
+    #Box center: (0.25021305680274963, 0.25057318806648254, -0.00046489297528751194)
+    #Box side lengths: (2.005079746246338, 1.5035337209701538, 1.503293752670288)
     # Render images after training
     render_images(
         model, cameras, image_size,
