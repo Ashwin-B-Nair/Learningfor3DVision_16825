@@ -29,8 +29,10 @@ class StratifiedRaysampler(torch.nn.Module):
         # TODO (Q1.4): Sample points from z values
         O = ray_bundle.origins.shape[0]   
         N =  z_vals.shape[0]
-        origins= ray_bundle.origins.unsqueeze(1).repeat(1, N, 1)         # [batch_size, num_rays, 3] ->  [batch_size, n_pts_per_ray, num_rays, 3]
-        directions = ray_bundle.directions.unsqueeze(1).repeat(1, N, 1)  # [batch_size, num_rays, 3] ->  [batch_size, n_pts_per_ray, num_rays, 3]
+        print("11111 directions shape:", ray_bundle.directions.shape)
+        print("11111 origins shape:", ray_bundle.origins.shape)
+        origins= ray_bundle.origins.unsqueeze(1).repeat(1, N, 1)         # [batch_size, num_rays, 3] ->  [batch_size, n_pts_per_ray, 3]
+        directions = ray_bundle.directions.unsqueeze(1).repeat(1, N, 1)  # [batch_size, num_rays, 3] ->  [batch_size, n_pts_per_ray, 3]
         print("directions shape:", directions.shape)
         print("origins shape:", origins.shape)
         z_vals = z_vals.unsqueeze(0).unsqueeze(-1).repeat(O, 1, 1)       # [n_pts_per_ray] ->  [batch_size, n_pts_per_ray, num_rays]
