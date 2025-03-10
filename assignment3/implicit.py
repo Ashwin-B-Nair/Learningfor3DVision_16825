@@ -308,7 +308,7 @@ class NeuralRadianceField(torch.nn.Module):
             hidden_dim=cfg.n_hidden_neurons_xyz,      # Number of neurons in hidden layers
             input_skips=cfg.append_xyz        # Skip connection at specified layers
         )
-        
+        self.view_dep = view_dep
         if self.view_dep:
             self.color_layer = torch.nn.Sequential(
                 torch.nn.Linear(cfg.n_hidden_neurons_xyz + embedding_dim_dir, cfg.n_hidden_neurons_dir),
