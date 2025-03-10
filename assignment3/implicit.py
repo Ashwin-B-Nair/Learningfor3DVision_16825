@@ -289,7 +289,7 @@ class NeuralRadianceField(torch.nn.Module):
     def __init__(
         self,
         cfg,
-        view_dep: bool = False
+        view_dep: bool = True
     ):
         super().__init__()
 
@@ -314,7 +314,6 @@ class NeuralRadianceField(torch.nn.Module):
         if self.view_dep:
             
             color_input_dim = cfg.n_hidden_neurons_xyz + self.harmonic_embedding_dir.output_dim
-            print("Color input dim", color_input_dim)
             self.color_layer = torch.nn.Sequential(
                 torch.nn.Linear(color_input_dim, cfg.n_hidden_neurons_dir),
                 torch.nn.ReLU(),
@@ -323,7 +322,7 @@ class NeuralRadianceField(torch.nn.Module):
             )
             
         else:
-            print("Color input dim", cfg.n_hidden_neurons_xyz)
+        
             self.color_layer = torch.nn.Sequential(
                 torch.nn.Linear(cfg.n_hidden_neurons_xyz, cfg.n_hidden_neurons_dir),
                 torch.nn.ReLU(),
@@ -343,7 +342,7 @@ class NeuralRadianceField(torch.nn.Module):
 
         # print("Encoded Points:", encoded_points.shape)
         # print("MLP Output:", mlp_output.shape)
-        print("Intermediate Features:", intermediate_features.shape)
+        # print("Intermediate Features:", intermediate_features.shape)
         
         density = torch.relu(density_raw)                            # [batch_size * n_pts_per_ray, 1]
 
@@ -362,7 +361,7 @@ class NeuralRadianceField(torch.nn.Module):
             color_input = mlp_output
 
         # print("Encoded Directions Shape:", encoded_directions.shape)
-        print("Color Input Shape (Before Concatenation):", color_input.shape)
+        # print("Color Input Shape (Before Concatenation):", color_input.shape)
         
         # Compute RGB color
         color = self.color_layer(color_input)           # [batch_size * n_pts_per_ray, 3]
