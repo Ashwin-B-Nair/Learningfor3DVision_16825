@@ -289,6 +289,7 @@ class NeuralRadianceField(torch.nn.Module):
     def __init__(
         self,
         cfg,
+        view_dep: bool = True
     ):
         super().__init__()
 
@@ -298,15 +299,7 @@ class NeuralRadianceField(torch.nn.Module):
         embedding_dim_xyz = self.harmonic_embedding_xyz.output_dim
         embedding_dim_dir = self.harmonic_embedding_dir.output_dim
         
-        # self.mlp_skip = MLPWithInputSkips(
-        #     n_layers=cfg.n_layers_xyz,
-        #     input_dim=embedding_dim_xyz,
-        #     output_dim=cfg.n_hidden_neurons_xyz,
-        #     skip_dim=0,
-        #     hidden_dim=cfg.n_hidden_neurons_xyz,
-        #     input_skips=[],
-        # )
-        
+               
         self.mlp_xyz = MLPWithInputSkips(
             n_layers=cfg.n_layers_xyz,         # Number of layers in the MLP
             input_dim=embedding_dim_xyz,      # Input dimension from positional encoding
@@ -316,13 +309,21 @@ class NeuralRadianceField(torch.nn.Module):
             input_skips=cfg.append_xyz        # Skip connection at specified layers
         )
         
-        # self.linear = torch.nn.Linear(cfg.n_hidden_neurons_xyz, 4)
-        self.color_layer = torch.nn.Sequential(
-            torch.nn.Linear(cfg.n_hidden_neurons_xyz, cfg.n_hidden_neurons_dir),
-            torch.nn.ReLU(),
-            torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
-            torch.nn.Sigmoid()  # Ensure RGB values are in [0, 1]
-        )
+        if self.view_dep:
+            self.color_layer = torch.nn.Sequential(
+                torch.nn.Linear(cfg.n_hidden_neurons_xyz + embedding_dim_dir, cfg.n_hidden_neurons_dir),
+                torch.nn.ReLU(),
+                torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
+                torch.nn.Sigmoid()  # Ensures RGB values are in [0, 1]
+            )
+            
+        else:
+            self.color_layer = torch.nn.Sequential(
+                torch.nn.Linear(cfg.n_hidden_neurons_xyz, cfg.n_hidden_neurons_dir),
+                torch.nn.ReLU(),
+                torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
+                torch.nn.Sigmoid()  # Ensure RGB values are in [0, 1]
+            )
         
     def forward(self, ray_bundle):
         # Extract sample points from RayBundle
@@ -345,8 +346,19 @@ class NeuralRadianceField(torch.nn.Module):
         # Compute density (apply ReLU to ensure non-negativity)
         density = torch.relu(density_raw)                            # [batch_size * n_pts_per_ray, 1]
 
-        # Compute RGB color from intermediate features
-        color = self.color_layer(mlp_output)              # [batch_size * n_pts_per_ray, 3]
+        if self.view_dep:
+            
+            viewing_directions = ray_bundle.directions.view(-1, 3)  # [batch_size * n_pts_per_ray, 3]
+            encoded_directions = self.harmonic_embedding_dir(viewing_directions)
+
+            # Concatenate intermediate features with encoded viewing directions
+            color_input = torch.cat([intermediate_features, encoded_directions], dim=-1)
+        else:
+            
+            color_input = intermediate_features
+
+        # Compute RGB color
+        color = self.color_layer(color_input)           # [batch_size * n_pts_per_ray, 3]
 
         
         # print("Density:", density.shape)
