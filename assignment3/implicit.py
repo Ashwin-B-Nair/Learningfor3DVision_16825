@@ -301,12 +301,12 @@ class NeuralRadianceField(torch.nn.Module):
         
                
         self.mlp_xyz = MLPWithInputSkips(
-            n_layers=cfg.n_layers_xyz,         # Number of layers in the MLP
-            input_dim=embedding_dim_xyz,      # Input dimension from positional encoding
+            n_layers=cfg.n_layers_xyz,            # Number of layers in the MLP
+            input_dim=embedding_dim_xyz,          # Input dimension from positional encoding
             output_dim=cfg.n_hidden_neurons_xyz,  # Output: hidden_dim for features 
-            skip_dim=embedding_dim_xyz,       # Dimensionality of positional encoding for skip connection
-            hidden_dim=cfg.n_hidden_neurons_xyz,      # Number of neurons in hidden layers
-            input_skips=cfg.append_xyz        # Skip connection at specified layers
+            skip_dim=embedding_dim_xyz,           # Dimensionality of positional encoding for skip connection
+            hidden_dim=cfg.n_hidden_neurons_xyz,  # Number of neurons in hidden layers
+            input_skips=cfg.append_xyz            # Skip connection at specified layers
         )
         
         self.view_dep = view_dep
@@ -327,13 +327,9 @@ class NeuralRadianceField(torch.nn.Module):
             )
         
     def forward(self, ray_bundle):
-        # Extract sample points from RayBundle
+        
         sample_points = ray_bundle.sample_points.view(-1, 3)         # [batch_size * n_pts_per_ray, 3]
-
-        # Apply positional encoding to sample points
         encoded_points = self.harmonic_embedding_xyz(sample_points)  # [batch_size * n_pts_per_ray, embedding_dim_xyz]
-
-        # Pass encoded points through MLP
         mlp_output = self.mlp_xyz(encoded_points, encoded_points)    # [batch_size * n_pts_per_ray, hidden_dim + 1]
 
         # Split into density and intermediate features
@@ -342,9 +338,8 @@ class NeuralRadianceField(torch.nn.Module):
 
         # print("Encoded Points:", encoded_points.shape)
         # print("MLP Output:", mlp_output.shape)
-        # print("Intermediate Features:", intermediate_features.shape)
+        print("Intermediate Features:", intermediate_features.shape)
         
-        # Compute density (apply ReLU to ensure non-negativity)
         density = torch.relu(density_raw)                            # [batch_size * n_pts_per_ray, 1]
 
         if self.view_dep:
@@ -361,6 +356,9 @@ class NeuralRadianceField(torch.nn.Module):
             
             color_input = intermediate_features
 
+        print("Encoded Directions Shape:", encoded_directions.shape)
+        print("Color Input Shape (Before Concatenation):", color_input.shape)
+        
         # Compute RGB color
         color = self.color_layer(color_input)           # [batch_size * n_pts_per_ray, 3]
 
