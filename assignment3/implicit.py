@@ -311,8 +311,9 @@ class NeuralRadianceField(torch.nn.Module):
         
         self.view_dep = view_dep
         if self.view_dep:
+            color_input_dim = cfg.n_hidden_neurons_xyz + self.harmonic_embedding_dir.output_dim
             self.color_layer = torch.nn.Sequential(
-                torch.nn.Linear(cfg.n_hidden_neurons_xyz + embedding_dim_dir, cfg.n_hidden_neurons_dir),
+                torch.nn.Linear(color_input_dim, cfg.n_hidden_neurons_dir),
                 torch.nn.ReLU(),
                 torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
                 torch.nn.Sigmoid()  # Ensure RGB values are in [0, 1]
