@@ -350,8 +350,11 @@ class NeuralRadianceField(torch.nn.Module):
         if self.view_dep:
             
             viewing_directions = ray_bundle.directions.view(-1, 3)  # [batch_size * n_pts_per_ray, 3]
-            encoded_directions = self.harmonic_embedding_dir(viewing_directions)
-
+            encoded_directions = self.harmonic_embedding_dir(viewing_directions)   # [batch_size, encoded_dir_dim]
+            n_pts_per_ray = ray_bundle.sample_points.shape[1]       
+            encoded_directions = encoded_directions.unsqueeze(1).repeat(1, n_pts_per_ray, 1)  # [batch_size, n_pts_per_ray, encoded_dir_dim]
+            encoded_directions = encoded_directions.view(-1, encoded_directions.shape[-1])    # [batch_size * n_pts_per_ray, encoded_dir_dim]
+            
             # Concatenate intermediate features with encoded viewing directions
             color_input = torch.cat([intermediate_features, encoded_directions], dim=-1)
         else:
