@@ -303,18 +303,19 @@ class NeuralRadianceField(torch.nn.Module):
         self.mlp_xyz = MLPWithInputSkips(
             n_layers=cfg.n_layers_xyz,         # Number of layers in the MLP
             input_dim=embedding_dim_xyz,      # Input dimension from positional encoding
-            output_dim=cfg.n_hidden_neurons_xyz,  # Output: hidden_dim for features + 1 for density
+            output_dim=cfg.n_hidden_neurons_xyz,  # Output: hidden_dim for features 
             skip_dim=embedding_dim_xyz,       # Dimensionality of positional encoding for skip connection
             hidden_dim=cfg.n_hidden_neurons_xyz,      # Number of neurons in hidden layers
             input_skips=cfg.append_xyz        # Skip connection at specified layers
         )
+        
         self.view_dep = view_dep
         if self.view_dep:
             self.color_layer = torch.nn.Sequential(
                 torch.nn.Linear(cfg.n_hidden_neurons_xyz + embedding_dim_dir, cfg.n_hidden_neurons_dir),
                 torch.nn.ReLU(),
                 torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
-                torch.nn.Sigmoid()  # Ensures RGB values are in [0, 1]
+                torch.nn.Sigmoid()  # Ensure RGB values are in [0, 1]
             )
             
         else:
