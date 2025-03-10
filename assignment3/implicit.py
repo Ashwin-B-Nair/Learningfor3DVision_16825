@@ -361,7 +361,7 @@ class NeuralRadianceField(torch.nn.Module):
             
             color_input = intermediate_features
 
-        print("Encoded Directions Shape:", encoded_directions.shape)
+        # print("Encoded Directions Shape:", encoded_directions.shape)
         print("Color Input Shape (Before Concatenation):", color_input.shape)
         
         # Compute RGB color
