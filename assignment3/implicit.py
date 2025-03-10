@@ -356,10 +356,10 @@ class NeuralRadianceField(torch.nn.Module):
             encoded_directions = encoded_directions.view(-1, encoded_directions.shape[-1])    # [batch_size * n_pts_per_ray, encoded_dir_dim]
             
             # Concatenate intermediate features with encoded viewing directions
-            color_input = torch.cat([intermediate_features, encoded_directions], dim=-1)
+            color_input = torch.cat([mlp_output, encoded_directions], dim=-1)
         else:
             
-            color_input = intermediate_features
+            color_input = mlp_output
 
         # print("Encoded Directions Shape:", encoded_directions.shape)
         print("Color Input Shape (Before Concatenation):", color_input.shape)
