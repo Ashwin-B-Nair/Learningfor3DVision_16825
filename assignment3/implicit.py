@@ -399,13 +399,15 @@ class NeuralSurface(torch.nn.Module):
             input_skips=cfg.append_distance            # Skip connection at specified layers
         )
         
+        
         # TODO (Q7): Implement Neural Surface MLP to output per-point color
-        self.color_layer = torch.nn.Sequential(
-            torch.nn.Linear(cfg.n_hidden_neurons_distance, cfg.n_hidden_neurons_dir),
+        self.mlp_color = torch.nn.Sequential(
+            torch.nn.Linear(cfg.n_hidden_neurons_distance, cfg.n_hidden_neurons_color),
             torch.nn.ReLU(),
-            torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
+            torch.nn.Linear(cfg.n_hidden_neurons_color, 3),
             torch.nn.Sigmoid()  
         )
+        
     def get_distance(
         self,
         points
@@ -432,7 +434,11 @@ class NeuralSurface(torch.nn.Module):
             distance: N X 3 Tensor, where N is number of input points
         '''
         points = points.view(-1, 3)
-        pass
+        encoded_points = self.harmonic_embedding_xyz(points)
+        mlp_output = self.mlp_sdf(encoded_points, encoded_points)
+        color = self.mlp_color(mlp_output)  # N x 3 tensor
+        
+        return color
     
     def get_distance_color(
         self,
@@ -445,6 +451,15 @@ class NeuralSurface(torch.nn.Module):
         You may just implement this by independent calls to get_distance, get_color
             but, depending on your MLP implementation, it maybe more efficient to share some computation
         '''
+        points = points.view(-1, 3)
+        
+        encoded_points = self.harmonic_embedding_xyz(points)
+        
+        mlp_output = self.mlp_sdf(encoded_points, encoded_points)
+        distance = distance = mlp_output[..., -1:]   # N x 1 tensor (signed distance)
+        color = self.mlp_color(mlp_output)           # N x 3 tensor (RGB values)
+        
+        return distance, color
         
     def forward(self, points):
         return self.get_distance(points)
