@@ -149,7 +149,7 @@ class SphereTracingRenderer(torch.nn.Module):
         # 2) Maintain a mask with the same batch dimension as the ray origins,
         #   indicating which points hit the surface, and which do not
         # points = origins.clone()
-        epsilon = 1e-5
+        epsilon = 1e-6
         dist = torch.zeros((origins.shape[0],1)).cuda()
         
         for _ in range(self.max_iters):
