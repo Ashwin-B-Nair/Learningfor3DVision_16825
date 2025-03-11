@@ -286,7 +286,7 @@ def train_points(
                 print("image saved- render complete")
             except Exception as e:
                 print("Empty mesh")
-                # print(e)
+                print(e)
 
 
 def pretrain_sdf(
