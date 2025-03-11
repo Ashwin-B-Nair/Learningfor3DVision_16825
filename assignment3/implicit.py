@@ -387,6 +387,18 @@ class NeuralSurface(torch.nn.Module):
     ):
         super().__init__()
         # TODO (Q6): Implement Neural Surface MLP to output per-point SDF
+        self.harmonic_embedding_xyz = HarmonicEmbedding(3, cfg.n_harmonic_functions_xyz)
+        embedding_dim_xyz = self.harmonic_embedding_xyz.output_dim
+        
+        self.mlp_sdf = MLPWithInputSkips(
+            n_layers=cfg.n_layers_xyz,            # Number of layers in the MLP
+            input_dim=embedding_dim_xyz,          # Input dimension from positional encoding
+            output_dim=cfg.n_hidden_neurons_xyz,  # Output: hidden_dim for features 
+            skip_dim=embedding_dim_xyz,           # Dimensionality of positional encoding for skip connection
+            hidden_dim=cfg.n_hidden_neurons_xyz,  # Number of neurons in hidden layers
+            input_skips=cfg.append_xyz            # Skip connection at specified layers
+        )
+        
         # TODO (Q7): Implement Neural Surface MLP to output per-point color
 
     def get_distance(
@@ -399,7 +411,11 @@ class NeuralSurface(torch.nn.Module):
             distance: N X 1 Tensor, where N is number of input points
         '''
         points = points.view(-1, 3)
-        pass
+        encoded_points = self.harmonic_embedding_xyz(points)
+        mlp_output = self.mlp_sdf(encoded_points, encoded_points)
+        distance = mlp_output[..., -1:]
+        
+        return distance
     
     def get_color(
         self,
