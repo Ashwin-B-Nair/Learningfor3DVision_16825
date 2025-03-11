@@ -400,7 +400,12 @@ class NeuralSurface(torch.nn.Module):
         )
         
         # TODO (Q7): Implement Neural Surface MLP to output per-point color
-
+        self.color_layer = torch.nn.Sequential(
+            torch.nn.Linear(cfg.n_hidden_neurons_distance, cfg.n_hidden_neurons_dir),
+            torch.nn.ReLU(),
+            torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
+            torch.nn.Sigmoid()  
+        )
     def get_distance(
         self,
         points
