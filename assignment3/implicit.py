@@ -324,7 +324,7 @@ class NeuralRadianceField(torch.nn.Module):
         else:
         
             self.color_layer = torch.nn.Sequential(
-                torch.nn.Linear(cfg.n_hidden_neurons_xyz, cfg.n_hidden_neurons_dir),
+                torch.nn.Linear(cfg.n_hidden_neurons_xyz-1, cfg.n_hidden_neurons_dir),
                 torch.nn.ReLU(),
                 torch.nn.Linear(cfg.n_hidden_neurons_dir, 3),
                 torch.nn.Sigmoid()  # Ensure RGB values are in [0, 1]
@@ -355,10 +355,10 @@ class NeuralRadianceField(torch.nn.Module):
             encoded_directions = encoded_directions.view(-1, encoded_directions.shape[-1])    # [batch_size * n_pts_per_ray, encoded_dir_dim]
             
             # Concatenate intermediate features with encoded viewing directions
-            color_input = torch.cat([mlp_output, encoded_directions], dim=-1)
+            color_input = torch.cat([intermediate_features, encoded_directions], dim=-1)
         else:
             
-            color_input = mlp_output
+            color_input = intermediate_features
 
         # print("Encoded Directions Shape:", encoded_directions.shape)
         # print("Color Input Shape (Before Concatenation):", color_input.shape)
