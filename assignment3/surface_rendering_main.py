@@ -281,9 +281,10 @@ def train_points(
                     cfg.data.image_size, file_prefix='eikonal', thresh=0.002,
                 )
                 imageio.mimsave('images/part_6.gif', [np.uint8(im * 255) for im in test_images], loop=0)
+                print("image saved- render complete")
             except Exception as e:
                 print("Empty mesh")
-                pass
+                # print(e)
 
 
 def pretrain_sdf(
