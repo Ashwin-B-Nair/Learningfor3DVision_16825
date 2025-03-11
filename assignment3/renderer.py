@@ -150,19 +150,18 @@ class SphereTracingRenderer(torch.nn.Module):
         #   indicating which points hit the surface, and which do not
         points = origins
         epsilon = 1e-5
-        mask = torch.zeros(origins.shape[0], dtype=torch.bool).cuda()
+        dist = torch.zeros(origins.shape[0], dtype=torch.bool).cuda()
+        
         for _ in range(self.max_iters):
-            sdf_values = implicit_fn(points)
-            converged = torch.abs(sdf_values) < epsilon
-            mask |= converged
-            step_sizes = torch.where(converged, torch.zeros_like(sdf_values), sdf_values)
-            points += step_sizes.unsqueeze(-1) * directions
-            beyond_far = torch.norm(points - origins, dim=-1) > self.far
-            mask[beyond_far] = False
-            if mask.all():  # Stop if all rays converge or terminate
+            points += dist* directions
+            sdf_values = implicit_fn(points).view(origins.shape[0], 1)
+            
+            mask = sdf_values <= epsilon
+            if torch.sum(mask) == origins.shape[0]:
                 break
             
-        return points, mask.unsqueeze(-1)
+            dist += sdf_values
+        return points, mask
 
     def forward(
         self,
