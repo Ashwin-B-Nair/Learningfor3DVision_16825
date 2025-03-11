@@ -275,11 +275,13 @@ def train_points(
             epoch % cfg.training.render_interval == 0
             and epoch > 0
         ):
+            print("part 6-rendering begins")
             try:
                 test_images = render_geometry(
                     model, create_surround_cameras(3.0, n_poses=20, up=(0.0, 1.0, 0.0), focal_length=2.0),
                     cfg.data.image_size, file_prefix='eikonal', thresh=0.002,
                 )
+                print("created test images")
                 imageio.mimsave('images/part_6.gif', [np.uint8(im * 255) for im in test_images], loop=0)
                 print("image saved- render complete")
             except Exception as e:
