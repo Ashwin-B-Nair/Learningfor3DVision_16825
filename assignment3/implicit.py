@@ -393,9 +393,9 @@ class NeuralSurface(torch.nn.Module):
         self.mlp_sdf = MLPWithInputSkips(
             n_layers=cfg.n_layers_distance,            # Number of layers in the MLP
             input_dim=embedding_dim_xyz,          # Input dimension from positional encoding
-            output_dim=cfg.n_hidden_neurons_xyz,  # Output: hidden_dim for features 
+            output_dim=cfg.n_hidden_neurons_distance,  # Output: hidden_dim for features 
             skip_dim=embedding_dim_xyz,           # Dimensionality of positional encoding for skip connection
-            hidden_dim=cfg.n_hidden_neurons_xyz,  # Number of neurons in hidden layers
+            hidden_dim=cfg.n_hidden_neurons_distance,  # Number of neurons in hidden layers
             input_skips=cfg.append_distance            # Skip connection at specified layers
         )
         
