@@ -150,7 +150,7 @@ class SphereTracingRenderer(torch.nn.Module):
         #   indicating which points hit the surface, and which do not
         points = origins
         epsilon = 1e-5
-        dist = torch.zeros(origins.shape[0]).cuda()
+        dist = torch.zeros((origins.shape[0],1)).cuda()
         
         for _ in range(self.max_iters):
             points += dist* directions
