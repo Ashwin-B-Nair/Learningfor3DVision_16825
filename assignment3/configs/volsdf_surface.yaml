@@ -35,9 +35,9 @@ training:
 
   checkpoint_path: ./volsdf_checkpoint
   checkpoint_interval: 50
-  resume: True
+  resume: False
 
-  render_interval: 200
+  render_interval: 10
 
   inter_weight: 0.1
   eikonal_weight: 0.02
