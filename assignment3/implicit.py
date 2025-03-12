@@ -402,7 +402,7 @@ class NeuralSurface(torch.nn.Module):
         
         # TODO (Q7): Implement Neural Surface MLP to output per-point color
         self.mlp_color = torch.nn.Sequential(
-            torch.nn.Linear(cfg.n_hidden_neurons_distance, cfg.n_hidden_neurons_color),
+            torch.nn.Linear(cfg.n_hidden_neurons_distance-1, cfg.n_hidden_neurons_color),
             torch.nn.ReLU(),
             torch.nn.Linear(cfg.n_hidden_neurons_color, 3),
             torch.nn.Sigmoid()  
@@ -436,7 +436,8 @@ class NeuralSurface(torch.nn.Module):
         points = points.view(-1, 3)
         encoded_points = self.harmonic_embedding_xyz(points)
         mlp_output = self.mlp_sdf(encoded_points, encoded_points)
-        color = self.mlp_color(mlp_output)  # N x 3 tensor
+        intermediate_features = mlp_output[..., :-1]
+        color = self.mlp_color(intermediate_features)  # N x 3 tensor
         
         return color
     
@@ -457,7 +458,8 @@ class NeuralSurface(torch.nn.Module):
         
         mlp_output = self.mlp_sdf(encoded_points, encoded_points)
         distance = mlp_output[..., -1:]              # N x 1 tensor (signed distance)
-        color = self.mlp_color(mlp_output)           # N x 3 tensor (RGB values)
+        intermediate_features = mlp_output[..., :-1]
+        color = self.mlp_color(intermediate_features)           # N x 3 tensor (RGB values)
         
         return distance, color
         
