@@ -404,21 +404,26 @@ def train_images(
             epoch % cfg.training.render_interval == 0
             and epoch > 0
         ):
+            print("part 7-rendering begins")
             test_images = render_images(
                 model, create_surround_cameras(4.0, n_poses=20, up=(0.0, 0.0, 1.0), focal_length=2.0),
                 cfg.data.image_size, file_prefix='volsdf'
             )
+            print("created test images")
             imageio.mimsave('images/part_7.gif', [np.uint8(im * 255) for im in test_images], loop=0)
-
+            print("part_7.gif rendering complete")
             try:
+                print("part 7 geometry-rendering begins")
                 test_images = render_geometry(
                     model, create_surround_cameras(4.0, n_poses=20, up=(0.0, 0.0, 1.0), focal_length=2.0),
                     cfg.data.image_size, file_prefix='volsdf_geometry'
                 )
+                print("creating test images")
                 imageio.mimsave('images/part_7_geometry.gif', [np.uint8(im * 255) for im in test_images], loop=0)
+                print("part_7_geometry rendering complete")
             except Exception as e:
                 print("Empty mesh")
-                pass
+                print(e)
                 
 @hydra.main(config_path='configs', config_name='torus')
 def main(cfg: DictConfig):
