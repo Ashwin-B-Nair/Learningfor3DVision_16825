@@ -224,7 +224,7 @@ def sdf_to_density(signed_distance, alpha, beta):
     exp_term = torch.exp(-s * signed_distance)
     density = (s * exp_term) / ((1 + exp_term) ** 2)
     
-    return alpha * density
+    return density
         
     
 
