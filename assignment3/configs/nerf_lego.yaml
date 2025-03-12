@@ -12,7 +12,7 @@ training:
 
   checkpoint_path: ./checkpoints
   checkpoint_interval: 10
-  resume: True
+  resume: False
 
   render_interval: 249
 
