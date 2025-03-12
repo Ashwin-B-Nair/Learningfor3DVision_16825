@@ -211,14 +211,21 @@ class SphereTracingRenderer(torch.nn.Module):
 
 def sdf_to_density(signed_distance, alpha, beta):
     # TODO (Q7): Convert signed distance to density with alpha, beta parameters
+    #VolSDF
     #alpha controls density scaling
     #beta controls smoothness of density transition near surfaces
-    density = torch.where(
-        signed_distance > 0,
-        0.5 * torch.exp(-signed_distance / beta),
-        1 - 0.5 * torch.exp(signed_distance / beta))
-        
+    # density = torch.where(
+    #     signed_distance > 0,
+    #     0.5 * torch.exp(-signed_distance / beta),
+    #     1 - 0.5 * torch.exp(signed_distance / beta))
+    
+    #NeUS
+    s = 1 / beta 
+    exp_term = torch.exp(-s * signed_distance)
+    density = (s * exp_term) / ((1 + exp_term) ** 2)
+    
     return alpha * density
+        
     
 
 class VolumeSDFRenderer(VolumeRenderer):
