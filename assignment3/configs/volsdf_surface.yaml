@@ -12,7 +12,7 @@ renderer:
   white_background: False
 
   alpha: 10.0
-  beta: 0.05
+  beta: 0.1
 
   relighting_function:
     type: none
@@ -35,7 +35,7 @@ training:
 
   checkpoint_path: ./volsdf_checkpoint
   checkpoint_interval: 5
-  resume: False
+  resume: True
 
   render_interval: 249
 
