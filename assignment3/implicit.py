@@ -456,7 +456,7 @@ class NeuralSurface(torch.nn.Module):
         encoded_points = self.harmonic_embedding_xyz(points)
         
         mlp_output = self.mlp_sdf(encoded_points, encoded_points)
-        distance = mlp_output[..., -1:]   # N x 1 tensor (signed distance)
+        distance = mlp_output[..., -1:]              # N x 1 tensor (signed distance)
         color = self.mlp_color(mlp_output)           # N x 3 tensor (RGB values)
         
         return distance, color
