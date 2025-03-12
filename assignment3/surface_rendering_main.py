@@ -109,7 +109,8 @@ def render_images(
             origin = torch.tensor([0.0, 0.0, 0.0], device=device) 
             light_location = None if lights is None else lights[cam_idx].location.to(device)
             if lights is not None:
-                light_dir = light_location - origin #TODO: Use light location and origin to compute light direction
+                # light_dir = light_location - origin #TODO: Use light location and origin to compute light direction
+                light_dir = None #TODO: Use light location and origin to compute light direction
                 light_dir = torch.nn.functional.normalize(light_dir, dim=-1).view(-1, 3)
             xy_grid = get_pixels_from_image(image_size, camera)
             ray_bundle = get_rays_from_pixels(xy_grid, image_size, camera)
