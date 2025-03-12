@@ -10,11 +10,11 @@ training:
   lr_scheduler_step_size: 50
   lr_scheduler_gamma: 0.8
 
-  checkpoint_path: ""
+  checkpoint_path: ./checkpoints
   checkpoint_interval: 50
   resume: True
 
-  render_interval: 20
+  render_interval: 249
 
 data:
   image_size: [128, 128]
