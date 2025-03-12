@@ -214,7 +214,7 @@ def sdf_to_density(signed_distance, alpha, beta):
     #alpha controls density scaling
     #beta controls smoothness of density transition near surfaces
     density = torch.where(
-        signed_distance <= 0,
+        signed_distance > 0,
         0.5 * torch.exp(-signed_distance / beta),
         1 - 0.5 * torch.exp(signed_distance / beta))
     
