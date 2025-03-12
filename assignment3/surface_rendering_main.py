@@ -411,7 +411,7 @@ def train_images(
             )
             print("created test images")
             # imageio.lmimsave(f'images/part_7_{cfg.renderer.alpha}alpha_{cfg.renderer.beta}beta.gif', [np.uint8(im * 255) for im in test_images], loop=0)
-            imageio.mimsave(f'images/part_8_SDF_50view.gif', [np.uint8(im * 255) for im in test_images], loop=0)
+            imageio.mimsave(f'images/part_8_SDF_10view.gif', [np.uint8(im * 255) for im in test_images], loop=0)
             print("part_7.gif rendering complete")
             try:
                 print("part 7 geometry-rendering begins")
@@ -421,7 +421,7 @@ def train_images(
                 )
                 print("creating test images")
                 # imageio.mimsave(f'images/part_7_geometry_{cfg.renderer.alpha}alpha_{cfg.renderer.beta}beta.gif', [np.uint8(im * 255) for im in test_images], loop=0)
-                imageio.mimsave(f'images/part_8_geometry_50view.gif', [np.uint8(im * 255) for im in test_images], loop=0)
+                imageio.mimsave(f'images/part_8_geometry_10view.gif', [np.uint8(im * 255) for im in test_images], loop=0)
                 print("part_7_geometry rendering complete")
             except Exception as e:
                 print("Empty mesh")
