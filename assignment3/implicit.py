@@ -99,7 +99,7 @@ class ComplexSceneSDF(torch.nn.Module):
             torch.tensor(cfg.torus1.center.val).float().unsqueeze(0), requires_grad=cfg.torus1.center.opt
         )
         self.radii = torch.nn.Parameter(
-            torch.tensor(cfg.torus1.radii.val).float().unsqueeze(0), requires_grad=cfg.radii.opt
+            torch.tensor(cfg.torus1.radii.val).float().unsqueeze(0), requires_grad=cfg.torus1.radii.opt
         )
 
     def forward(self, points):
