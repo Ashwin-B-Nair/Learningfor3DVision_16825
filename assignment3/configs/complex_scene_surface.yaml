@@ -24,14 +24,14 @@ implicit_function:
     type: complex_scene
     sphere1:
       center:
-        val: [0.0, -1.0, -2.0]
+        val: [0.0, 0.0, -1.0]
         opt: True
       radius:
-        val: 0.5
+        val: 0.75
         opt: False
     sphere2:
       center:
-        val: [1.0, 1.0, -3.0]
+        val: [0.0, 0.0, 1.0]
         opt: True
       radius:
         val: 0.75
@@ -45,10 +45,10 @@ implicit_function:
         opt: False
     box1:
       center:
-        val: [2.0, -2.0, -4.0]
+        val: [0.0, 0.0, 0.0]
         opt: True
       side_lengths:
-        val: [1.5, 1.5, 1.5]
+        val: [0.5, 0.5, 0.5]
         opt: False
 
   feature:
