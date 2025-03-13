@@ -24,7 +24,7 @@ implicit_function:
     type: complex_scene
     sphere1:
       center:
-        val: [0.0, 0.0, -2.0]
+        val: [0.0, 0.0, -1.5]
         opt: True
       radius:
         val: 0.75
