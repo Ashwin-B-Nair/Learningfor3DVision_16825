@@ -87,17 +87,16 @@ class TorusSDF(torch.nn.Module):
 class ComplexSceneSDF(torch.nn.Module):
     def __init__(self, cfg):
         super().__init__()
-        # Define multiple primitives with their configurations
+        
         self.primitives = torch.nn.ModuleList([
             SphereSDF(cfg.sphere1),
             SphereSDF(cfg.sphere2),
             TorusSDF(cfg.torus1),
             BoxSDF(cfg.box1),
-            # Add more primitives as needed
         ])
 
     def forward(self, points):
-        # Compute the minimum signed distance across all primitives
+        
         distances = torch.cat([primitive(points) for primitive in self.primitives], dim=-1)
         return torch.min(distances, dim=-1, keepdim=True)[0]
     
