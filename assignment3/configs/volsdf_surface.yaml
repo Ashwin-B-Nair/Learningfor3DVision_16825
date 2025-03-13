@@ -35,7 +35,7 @@ training:
 
   checkpoint_path: ./volsdf_checkpoint
   checkpoint_interval: 5
-  resume: True
+  resume: False
 
   render_interval: 249
 
