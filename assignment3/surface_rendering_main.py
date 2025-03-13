@@ -144,7 +144,7 @@ def render(
     model = model.cuda(); model.eval()
 
     # Render spiral
-    cameras = create_surround_cameras(3.0, n_poses=20, up=(0.0, 0.0, 0.0))
+    cameras = create_surround_cameras(3.0, n_poses=20, up=(0.0, 0.0, 1.0))
     all_images = render_images(
         model, cameras, cfg.data.image_size
     )
