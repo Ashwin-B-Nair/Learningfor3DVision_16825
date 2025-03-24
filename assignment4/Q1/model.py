@@ -362,9 +362,12 @@ class Gaussians:
         """
         ### YOUR CODE HERE ###
         # HINT: Refer to README for a relevant equation
-        power = None  # (N, H*W)
+        diff = points_2D - means_2D  #(N, H*W, 2)
+        intermediate = torch.einsum("nhw,nij->nhw", diff, cov_2D_inverse)  #(N, H*W, 2)
+        
+        power = -0.5 * torch.sum(intermediate * diff, dim=-1)  # (N, H*W)
 
-        return power
+        return power 
 
     @staticmethod
     def apply_activations(pre_act_quats, pre_act_scales, pre_act_opacities):
