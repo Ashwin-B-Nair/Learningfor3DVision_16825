@@ -29,7 +29,7 @@ def optimize_nerf(
     """
 
     # Step 1. Create text embeddings from prompt
-    embeddings = prepare_embeddings(sds, prompt, neg_prompt, view_dependent=False)
+    embeddings = prepare_embeddings(sds, prompt, neg_prompt, view_dependent=True)
 
     # Step 2. Set up NeRF model
     model = NeRFNetwork(args).to(device)
@@ -160,12 +160,29 @@ def optimize_nerf(
                 text_cond = embeddings["default"]
             else:
                 ### YOUR CODE HERE ###
-                pass
+                # print("view dep")
+                front = embeddings["front"]
+                back = embeddings["back"]
+                side = embeddings["side"]
+                azimuth_normalized = (azimuth + 180) / 360
+                # text_cond = embeddings["default"]
+                text_cond = azimuth_normalized * front + (1 - azimuth_normalized) * side
 
   
             ### YOUR CODE HERE ###
-            latents = 
-            loss = 
+            # print(f"Rendered image shape: {pred_rgb.shape}")
+            # assert pred_rgb.shape[-2:] == (512, 512), f"Rendered image shape is {pred_rgb.shape[-2:]}, expected (512, 512)"
+            pred_rgb = torch.nn.functional.interpolate(pred_rgb, (512, 512))
+            latents = sds.encode_imgs(pred_rgb)
+            if not args.view_dep_text:
+              loss = sds.sds_loss(latents, text_cond, text_uncond)
+            else:
+                # print("view dep")
+                loss_front = sds.sds_loss(latents, front, text_uncond)
+                loss_back = sds.sds_loss(latents, back, text_uncond)
+                loss_side = sds.sds_loss(latents, side, text_uncond)
+                loss_cond = sds.sds_loss(latents,  embeddings["default"], text_uncond)
+                loss = loss_front + loss_side + loss_back + loss_cond 
 
             # regularizations
             if args.lambda_entropy > 0:
@@ -198,6 +215,7 @@ def optimize_nerf(
             if global_step % 100 == 0:
                 loss_dict[global_step] = loss.item()
                 # save the nerf rendering as the logging output, instead of the decoded latent
+                # pred_rgb = torch.nn.functional.interpolate(pred_rgb, (512, 512))
                 imgs = (
                     pred_rgb.detach().cpu().permute(0, 2, 3, 1).numpy()
                 )  # torch to numpy, shape [1, 512, 512, 3]

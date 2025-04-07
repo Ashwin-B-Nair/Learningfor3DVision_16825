@@ -3,6 +3,7 @@ import torch
 import imageio
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.special import sph_harm
 
 from PIL import Image
 from plyfile import PlyData
@@ -193,22 +194,133 @@ def load_gaussians_from_ply(path):
     }
     return output
 
+# def colours_from_spherical_harmonics(spherical_harmonics, gaussian_dirs):
+#     """
+#     [Q 1.3.1] Computes view-dependent colour given spherical harmonic coefficients
+#     and direction vectors for each gaussian.
+
+#     Args:
+#         spherical_harmonics     :   A torch.Tensor of shape (N, 48) representing the
+#                                     spherical harmonic coefficients.
+#         gaussian_dirs           :   A torch.Tensor of shape (N, 3) representing the
+#                                     direction vectors pointing from the camera origin
+#                                     to each Gaussian.
+
+#     Returns:
+#         colours                 :   A torch.Tensor of shape (N, 3) representing the view dependent
+#                                     RGB colour.
+#     """
+#     ### YOUR CODE HERE ###
+#     # Convert Cartesian directions to spherical angles
+#     x, y, z = gaussian_dirs[:, 0], gaussian_dirs[:, 1], gaussian_dirs[:, 2]
+#     theta = torch.atan2(y, x)  # Azimuthal angle
+#     phi = torch.acos(torch.clamp(z, -1.0, 1.0))  # Polar angle
+
+#     # Number of SH coefficients per channel (48 total for L=4)
+#     L = int((spherical_harmonics.shape[1] // 3)**0.5)  # Degree L = sqrt(48 / 3)
+
+#     # Initialize colors
+#     colours = torch.zeros((spherical_harmonics.shape[0], 3), device=spherical_harmonics.device)
+
+#     # Compute SH contributions for each channel (R, G, B)
+#     for l in range(L):
+#         for m in range(-l, l + 1):
+#             # Evaluate SH basis function Y_lm at all directions
+#             Y_lm = sph_harm(m, l, theta.cpu().numpy(), phi.cpu().numpy()).real
+#             Y_lm = torch.tensor(Y_lm, device=spherical_harmonics.device)
+
+#             # Map (l, m) to flat index
+#             idx = l * l + l + m
+
+#             # Add contributions for each color channel
+#             colours[:, 0] += spherical_harmonics[:, idx] * Y_lm  # Red channel
+#             colours[:, 1] += spherical_harmonics[:, idx + L**2] * Y_lm  # Green channel
+#             colours[:, 2] += spherical_harmonics[:, idx + 2 * L**2] * Y_lm  # Blue channel
+    
+#     return colours
+
 def colours_from_spherical_harmonics(spherical_harmonics, gaussian_dirs):
     """
-    [Q 1.3.1] Computes view-dependent colour given spherical harmonic coefficients
-    and direction vectors for each gaussian.
+    Computes view-dependent colour using spherical harmonic coefficients and direction vectors.
 
     Args:
-        spherical_harmonics     :   A torch.Tensor of shape (N, 48) representing the
-                                    spherical harmonic coefficients.
-        gaussian_dirs           :   A torch.Tensor of shape (N, 3) representing the
-                                    direction vectors pointing from the camera origin
-                                    to each Gaussian.
+        spherical_harmonics: A torch.Tensor of shape (N, 48) representing the spherical harmonic coefficients.
+        gaussian_dirs: A torch.Tensor of shape (N, 3) representing direction vectors pointing from the camera origin
+                       to each Gaussian.
 
     Returns:
-        colours                 :   A torch.Tensor of shape (N, 3) representing the view dependent
-                                    RGB colour.
+        colours: A torch.Tensor of shape (N, 3) representing the view-dependent RGB colours.
     """
-    ### YOUR CODE HERE ###
-    colours = None
-    return colours
+    # Constants for spherical harmonics (predefined normalization factors)
+    SH_C0 = 0.2820947918  # l=0
+    SH_C1 = 0.4886025119  # l=1
+    SH_C2_0 = 1.0925484306  # l=2, m=-2
+    SH_C2_1 = 1.0925484306  # l=2, m=-1
+    SH_C2_2 = 0.3153915653  # l=2, m=0
+    SH_C2_3 = 1.0925484306  # l=2, m=1
+    SH_C2_4 = 0.5462742153  # l=2, m=2
+    SH_C3_0 = -0.5900435899  # l=3, m=-3
+    SH_C3_1 = -1.7701307698  # l=3, m=-2
+    SH_C3_2 = 0.9461746958   # l=3, m=-1
+    SH_C3_3 = -0.6690465436  # l=3, m=0
+    SH_C3_4 = -0.6690465436  # l=3, m=1
+    SH_C3_5 = 0.9461746958   # l=3, m=2
+    SH_C3_6 = -1.7701307698  # l=3, m=3
+
+    x, y, z = gaussian_dirs[:, 0], gaussian_dirs[:, 1], gaussian_dirs[:, 2]
+    
+    c0 = spherical_harmonics[:, :3]  # First three coefficients correspond to DC term
+    color = SH_C0 * c0
+
+    shdim = spherical_harmonics.shape[1]
+
+    if shdim > 3:
+        # First-order harmonics (l = 1)
+        c1, c2, c3 = spherical_harmonics[:, 3:6], spherical_harmonics[:, 6:9], spherical_harmonics[:, 9:12]
+        color += -SH_C1 * y.unsqueeze(-1) * c1 + SH_C1 * z.unsqueeze(-1) * c2 - SH_C1 * x.unsqueeze(-1) * c3
+
+    if shdim > 12:
+        # Second-order harmonics (l = 2)
+        c4, c5, c6, c7, c8 = (
+            spherical_harmonics[:, 12:15],
+            spherical_harmonics[:, 15:18],
+            spherical_harmonics[:, 18:21],
+            spherical_harmonics[:, 21:24],
+            spherical_harmonics[:, 24:27],
+        )
+        xx, yy, zz = x * x, y * y, z * z
+        xy, yz, xz = x * y, y * z, x * z
+
+        color += (
+            SH_C2_0 * xy.unsqueeze(-1) * c4 +
+            SH_C2_1 * yz.unsqueeze(-1) * c5 +
+            SH_C2_2 * (2.0 * zz - xx - yy).unsqueeze(-1) * c6 +
+            SH_C2_3 * xz.unsqueeze(-1) * c7 +
+            SH_C2_4 * (xx - yy).unsqueeze(-1) * c8
+        )
+
+    if shdim > 27:
+        # Third-order harmonics (l = 3)
+        c9, c10, c11, c12, c13, c14, c15 = (
+            spherical_harmonics[:, 27:30],
+            spherical_harmonics[:, 30:33],
+            spherical_harmonics[:, 33:36],
+            spherical_harmonics[:, 36:39],
+            spherical_harmonics[:, 39:42],
+            spherical_harmonics[:, 42:45],
+            spherical_harmonics[:, 45:48],
+        )
+
+        color += (
+            SH_C3_0 * y.unsqueeze(-1) * (3.0 * xx - yy).unsqueeze(-1) * c9 +
+            SH_C3_1 * xy.unsqueeze(-1) * z.unsqueeze(-1) * c10 +
+            SH_C3_2 * y.unsqueeze(-1) * (4.0 * zz - xx - yy).unsqueeze(-1) * c11 +
+            SH_C3_3 * z.unsqueeze(-1) * (2.0 * zz - 3.0 * xx - 3.0 * yy).unsqueeze(-1) * c12 +
+            SH_C3_4 * x.unsqueeze(-1) * (4.0 * zz - xx - yy).unsqueeze(-1) * c13 +
+            SH_C3_5 * z.unsqueeze(-1) * (xx - yy).unsqueeze(-1) * c14 +
+            SH_C3_6 * x.unsqueeze(-1) * (xx - 3.0 * yy).unsqueeze(-1) * c15
+        )
+
+    color += 0.5
+
+    return torch.clamp(color, min=0.0, max=1.0)

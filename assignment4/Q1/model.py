@@ -247,8 +247,10 @@ class Gaussians:
         ### YOUR CODE HERE ###
         R = p3d.transforms.quaternion_to_matrix(quats).to(self.device)
         S = torch.diag_embed(scales).to(self.device)
-        # cov_3D = torch.matmul(torch.matmul(torch.matmul(R, S), torch.transpose(S, 1, 2)), torch.transpose(R, 1, 2))  # (N, 3, 3)
-        cov_3D = R @ S @ R.transpose(-1, -2)
+        # print("R shape:", R.shape)
+        # print("S shape:", S.shape)
+        cov_3D = torch.matmul(torch.matmul(torch.matmul(R, S), torch.transpose(S, 1, 2)), torch.transpose(R, 1, 2))  # (N, 3, 3)
+        # cov_3D = R @ S @ R.transpose(-1, -2)
         return cov_3D
 
     def compute_cov_2D(
@@ -313,7 +315,7 @@ class Gaussians:
         ### YOUR CODE HERE ###
         # HINT: Do note that means_2D have units of pixels. Hence, you must apply a
         # transformation that moves points in the world space to screen space.
-        projected_points = camera.transform_points(means_3D)  # (N, 3)
+        projected_points = camera.transform_points_screen(means_3D)  # (N, 3)
         means_2D = projected_points[:, :2]  # (N, 2)
         return means_2D
 
@@ -363,10 +365,9 @@ class Gaussians:
         ### YOUR CODE HERE ###
         # HINT: Refer to README for a relevant equation
         diff = points_2D - means_2D  #(N, H*W, 2)
-        intermediate = torch.einsum("nhw,nij->nhw", diff, cov_2D_inverse)  #(N, H*W, 2)
+        power = -0.5 * torch.einsum("nhw,nwk, nhk->nh", diff, cov_2D_inverse, diff)  #(N, H*W, 2)
+        # power = -0.5 * torch.sum(intermediate * diff, dim=-1)  # (N, H*W)
         
-        power = -0.5 * torch.sum(intermediate * diff, dim=-1)  # (N, H*W)
-
         return power 
 
     @staticmethod
@@ -427,7 +428,7 @@ class Scene:
         """
         ### YOUR CODE HERE ###
         sorted_idx = torch.argsort(z_vals)
-        mask = sorted >= 0
+        mask = sorted_idx >= 0
         idxs = torch.masked_select(sorted_idx, mask)  # (N,)
 
         return idxs
@@ -741,5 +742,7 @@ class Scene:
         ### YOUR CODE HERE ###
         # HINT: Think about how to get the camera origin in the world frame.
         # HINT: Do not forget to normalize the computed directions.
-        gaussian_dirs = None  # (N, 3)
+        camera_origin = camera.get_camera_center()  # Shape: (1, 3)
+        gaussian_dirs = means_3D - camera_origin
+        gaussian_dirs = gaussian_dirs / torch.norm(gaussian_dirs, dim=-1, keepdim=True) # (N, 3)
         return gaussian_dirs

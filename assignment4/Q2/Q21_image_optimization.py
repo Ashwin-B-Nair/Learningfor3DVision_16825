@@ -36,15 +36,19 @@ def optimize_an_image(
     scheduler = get_cosine_schedule_with_warmup(optimizer, 100, int(total_iter * 1.5))
 
     # Step 4. Training loop to optimize the latents
+    text_embeddings_default = embeddings["default"]
+    text_embeddings_uncond = embeddings["uncond"]
+    
     for i in tqdm(range(total_iter)):
         optimizer.zero_grad()
         # Forward pass to compute the loss
         
         ### YOUR CODE HERE ###
         if args.sds_guidance:
-            loss = 
+            loss = sds.sds_loss(latents, text_embeddings_default,
+                                text_embeddings_uncond)
         else:
-            loss = 
+            loss = sds.sds_loss(latents, text_embeddings_default)
 
         # Backward pass
         loss.backward()
