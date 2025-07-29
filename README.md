@@ -10,9 +10,11 @@ This repository contains my assignment work for the Learning for 3D Vision (16-8
 
 ## Assignments
 
-1. **Assignment 1:** Rendering basics with Pytorch3D
-2. **Assignment 2:** Single view to 3D
-
+**Assignment 1:** Rendering basics with Pytorch3D
+**Assignment 2:** Single view to 3D
+**Assignment 3:** Neural Volume Rendering and Surface Rendering
+**Assignment 4:** 3D Gaussian Splatting and Diffusion Guided Optimization
+**Assignment 5:** Point CLoud Processing 
 
 Each folder contains the code, data, and report related to the respective assignment. Detailed instructions and explanations can be found in the README file within each assignment's folder.
 
